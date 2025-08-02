@@ -1,0 +1,42 @@
+{% extends 'lectura/base.html' %}
+
+{% block title %}Metas | Gestor de Lecturas{% endblock %}
+
+{% block content %}
+<h1>Mis Metas</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn">Crear meta</button>
+</form>
+<hr>
+<h2>Progreso de tus metas</h2>
+<ul>
+    {% for p in progreso %}
+        <li style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+            <div>
+                <strong>{{ p.meta.nombre }}</strong> ({{ p.meta.tipo }})<br>
+                <span style="font-size:0.95em; color:#888;">Creada por: {{ p.meta.creador.nombre|default_if_none:'-' }}</span><br>
+                Fecha límite: {{ p.meta.fecha_fin }}<br>
+                {% if p.objetivo_libros %}
+                    Libros leídos: {{ p.libros_leidos }} / {{ p.objetivo_libros }}<br>
+                {% else %}
+                    Libros leídos: {{ p.libros_leidos }} / {{ p.total_libros }}<br>
+                {% endif %}
+                {% if p.objetivo_notas %}
+                    <ul>
+                    {% for libro, notas in p.notas_por_libro.items %}
+                        <li>Notas en <strong>{{ libro }}</strong>: {{ notas }} / {{ p.objetivo_notas }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            {% if p.meta.creador == user or user.is_superuser or user.is_staff %}
+                <a href="{% url 'metas:editar_meta' p.meta.id %}" class="btn" style="margin-left:10px; white-space:nowrap;">Editar</a>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No tienes metas registradas.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

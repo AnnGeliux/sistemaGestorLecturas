@@ -1,0 +1,18 @@
+{% extends 'lectura/base.html' %}
+
+{% block title %}Lecturas | Gestor de Lecturas{% endblock %}
+
+{% block content %}
+<h1>Progreso de Lectura</h1>
+<ul>
+    {% for progreso in progresos %}
+        <li>
+            <strong>{{ progreso.libro.titulo }}</strong> - Página leída: {{ progreso.ultima_pagina_leida }}
+            <span> | Fecha: {{ progreso.fecha_actualizacion }}</span>
+            <a class="btn" href="{% url 'lectura:detalle_progreso' progreso.pk %}">Ver detalle</a>
+        </li>
+    {% empty %}
+        <li>No tienes progresos de lectura registrados.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

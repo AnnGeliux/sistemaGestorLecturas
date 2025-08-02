@@ -1,0 +1,24 @@
+{% extends 'lectura/base.html' %}
+
+{% block title %}Notas | Gestor de Lecturas{% endblock %}
+
+{% block content %}
+<h1>Notas de tus Libros</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn">Agregar nota</button>
+</form>
+<hr>
+<h2>Notas recientes</h2>
+<ul>
+    {% for nota in notas %}
+        <li>
+            <strong>{{ nota.libro.titulo }}</strong> ({{ nota.fecha }}):<br>
+            {{ nota.contenido|linebreaksbr }}
+        </li>
+    {% empty %}
+        <li>No tienes notas registradas.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gestor de Lecturas - Administra tus libros, progresos y metas de lectura.">
+    <title>{% block title %}Mi Gestor de Lecturas{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body style="display: flex; flex-direction: column; min-height: 100vh;">
+    <header>
+        <div class="container header-flex">
+            <h1>Gestor de Lecturas</h1>
+            <nav class="main-nav">
+                <a href="/">Inicio</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'libros:lista_libros' %}">Libros</a>
+                    <a href="{% url 'metas:index' %}">Metas</a>
+                    <a href="{% url 'notas:index' %}">Notas</a>
+                    <a href="{% url 'estadisticas:index' %}">Estadísticas</a>
+                    <span class="user-info">👤 {{ user.username }}</span>
+                    {% if user.is_superuser or user.is_staff %}
+                        <a href="/admin/" target="_blank" class="admin-btn">Admin</a>
+                    {% endif %}
+                    <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-btn" style="background:none;border:none;color:inherit;cursor:pointer;padding:0;">Cerrar sesión</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}">Iniciar sesión</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="container" style="flex: 1 0 auto;">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer style="flex-shrink: 0;">
+        <div class="container">
+            <p>&copy; 2025 - Gestor de Lecturas</p>
+        </div>
+    </footer>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

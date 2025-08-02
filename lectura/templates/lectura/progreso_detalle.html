@@ -1,0 +1,6 @@
+<h1>Progreso de Lectura</h1>
+<p><strong>Libro:</strong> {{ object.libro.titulo }}</p>
+<p><strong>Última página leída:</strong> {{ object.ultima_pagina_leida }}</p>
+<p><strong>Porcentaje de avance:</strong> {{ object.porcentaje_avance }}%</p>
+<a href="{% url 'lectura:editar_progreso' object.pk %}">Editar progreso</a>
+<a href="{% url 'lectura:lista' %}">Volver</a>

@@ -1,0 +1,13 @@
+{% extends 'lectura/base.html' %}
+
+{% block title %}Editar Meta | Gestor de Lecturas{% endblock %}
+
+{% block content %}
+<h1>Editar Meta: {{ meta.nombre }}</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn">Guardar cambios</button>
+    <a href="{% url 'metas:index' %}" class="btn">Cancelar</a>
+</form>
+{% endblock %}

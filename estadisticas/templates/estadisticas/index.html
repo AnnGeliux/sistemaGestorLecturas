@@ -1,0 +1,119 @@
+{% extends 'lectura/base.html' %}
+
+{% block title %}Estadísticas | Gestor de Lecturas{% endblock %}
+
+
+{% block content %}
+<h1>Estadísticas Generales</h1>
+<div class="estadisticas-grid">
+    <div class="estadistica-card">
+        <h2>Total de libros</h2>
+        <p>{{ total_libros }}</p>
+    </div>
+    <div class="estadistica-card">
+        <h2>Libros leídos</h2>
+        <p>{{ libros_leidos }}</p>
+    </div>
+    <div class="estadistica-card">
+        <h2>Libros en progreso</h2>
+        <p>{{ libros_leyendo }}</p>
+    </div>
+    <div class="estadistica-card">
+        <h2>Libros por leer</h2>
+        <p>{{ libros_por_leer }}</p>
+    </div>
+    <div class="estadistica-card">
+        <h2>Total de notas</h2>
+        <p>{{ total_notas }}</p>
+    </div>
+    <div class="estadistica-card">
+        <h2>Total de metas</h2>
+        <p>{{ total_metas }}</p>
+    </div>
+    <div class="estadistica-card">
+        <h2>Porcentaje de avance en metas</h2>
+        <p>{{ promedio_avance_metas }}%</p>
+    </div>
+</div>
+
+<hr>
+<h2>Gráficas de tu actividad</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center;">
+    <div style="flex: 1 1 320px; max-width: 400px;">
+        <h3>Libros por estado</h3>
+        <canvas id="librosEstadoChart" width="350" height="350" aria-label="Libros por estado" role="img"></canvas>
+    </div>
+    <div style="flex: 1 1 320px; max-width: 400px;">
+        <h3>Notas por libro</h3>
+        <canvas id="notasLibroChart" width="350" height="350" aria-label="Notas por libro" role="img"></canvas>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Gráfica de libros por estado
+const librosEstadoData = {
+    labels: [{% for e in libros_por_estado %}'{{ e.estado|escapejs }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+    datasets: [{
+        data: [{% for e in libros_por_estado %}{{ e.cantidad }}{% if not forloop.last %},{% endif %}{% endfor %}],
+        backgroundColor: ['#1abc9c', '#f39c12', '#e74c3c'],
+    }]
+};
+new Chart(document.getElementById('librosEstadoChart'), {
+    type: 'pie',
+    data: librosEstadoData,
+    options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } }
+    }
+});
+
+// Gráfica de notas por libro
+const notasLibroData = {
+    labels: [{% for t, n in notas_por_libro %}'{{ t|escapejs }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+    datasets: [{
+        label: 'Notas',
+        data: [{% for t, n in notas_por_libro %}{{ n }}{% if not forloop.last %},{% endif %}{% endfor %}],
+        backgroundColor: '#1abc9c',
+    }]
+};
+new Chart(document.getElementById('notasLibroChart'), {
+    type: 'bar',
+    data: notasLibroData,
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, stepSize: 1 } }
+    }
+});
+</script>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+.estadisticas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+.estadistica-card {
+    background: #f7f8fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    padding: 1.5rem;
+    text-align: center;
+}
+.estadistica-card h2 {
+    margin-top: 0;
+    font-size: 1.2rem;
+}
+.estadistica-card p {
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin: 0.5rem 0 0 0;
+}
+</style>
+{% endblock %}

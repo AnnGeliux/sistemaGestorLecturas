@@ -1,0 +1,35 @@
+{% extends 'lectura/base.html' %}
+
+{% block title %}Registrar Libro | Gestor de Lecturas{% endblock %}
+
+{% block content %}
+<h1>Registrar Nuevo Libro</h1>
+<form method="post" id="libro-form">
+    {% csrf_token %}
+    {# Renderiza todos los campos excepto 'etiquetas' #}
+    {% for field in form %}
+        {% if field.name != 'etiquetas' %}
+            <p>{{ field.label_tag }} {{ field }}</p>
+        {% endif %}
+    {% endfor %}
+    <p>{{ form.etiquetas.label_tag }} {{ form.etiquetas }}</p>
+    <div id="etiquetas-dinamicas">
+        <label>Agregar nuevas etiquetas (opcional):</label>
+        <div id="campos-etiquetas"></div>
+        <button type="button" onclick="agregarCampoEtiqueta()">Agregar otra etiqueta</button>
+    </div>
+    <button type="submit">Guardar</button>
+</form>
+<script>
+function agregarCampoEtiqueta() {
+    const div = document.getElementById('campos-etiquetas');
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.name = 'nueva_etiqueta';
+    input.className = 'form-control';
+    input.placeholder = 'Etiqueta nueva';
+    div.appendChild(input);
+}
+</script>
+<a href="{% url 'libros:lista_libros' %}">Volver a la lista</a>
+{% endblock %}

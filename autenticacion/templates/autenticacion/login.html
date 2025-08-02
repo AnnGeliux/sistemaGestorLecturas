@@ -1,0 +1,22 @@
+{% extends 'lectura/base.html' %}
+
+{% block title %}Iniciar sesión | Gestor de Lecturas{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <h2>Iniciar sesión</h2>
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_username">Correo</label>
+            <input type="text" name="username" autofocus required id="id_username" class="form-control" placeholder="Correo electrónico">
+        </div>
+        <div class="form-group">
+            <label for="id_password">Contraseña</label>
+            <input type="password" name="password" required id="id_password" class="form-control" placeholder="Contraseña">
+        </div>
+        <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
+    <p>¿No tienes cuenta? <a href="{% url 'register' %}">Regístrate aquí</a></p>
+</div>
+{% endblock %}
