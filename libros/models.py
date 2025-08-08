@@ -31,6 +31,7 @@ class Libro(models.Model):
     etiquetas = models.ManyToManyField(Etiqueta, related_name='libros')
     fecha_publicacion = models.DateField(null=True, blank=True)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='libros')
+    imagen = models.ImageField(upload_to='libros_portadas/', null=True, blank=True, verbose_name='Portada')
 
 
 

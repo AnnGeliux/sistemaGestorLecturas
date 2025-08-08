@@ -5,37 +5,49 @@
 
 {% block content %}
 <h1>Estadísticas Generales</h1>
-<div class="estadisticas-grid">
-    <div class="estadistica-card">
-        <h2>Total de libros</h2>
-        <p>{{ total_libros }}</p>
+<div class="kpi-row">
+    <div class="kpi-card kpi-green" title="Libros que has terminado de leer.">
+        <span class="kpi-icon">📗</span>
+        <div class="kpi-title">Libros leídos</div>
+        <div class="kpi-value" title="Total de libros leídos este mes: {{ libros_leidos }}">{{ libros_leidos }}</div>
+        <div class="kpi-change" title="Cambio respecto al mes anterior: {{ cambio_libros_leidos }}">{{ cambio_libros_leidos }}</div>
+        <div class="kpi-desc">Cantidad de libros que has finalizado.</div>
     </div>
-    <div class="estadistica-card">
-        <h2>Libros leídos</h2>
-        <p>{{ libros_leidos }}</p>
+    <div class="kpi-card kpi-blue" title="Libros que estás leyendo actualmente.">
+        <span class="kpi-icon">📘</span>
+        <div class="kpi-title">Libros en progreso</div>
+        <div class="kpi-value" title="Total de libros en progreso este mes: {{ libros_leyendo }}">{{ libros_leyendo }}</div>
+        <div class="kpi-change" title="Cambio respecto al mes anterior: {{ cambio_libros_leyendo }}">{{ cambio_libros_leyendo }}</div>
+        <div class="kpi-desc">Libros que tienes abiertos y aún no has terminado.</div>
     </div>
-    <div class="estadistica-card">
-        <h2>Libros en progreso</h2>
-        <p>{{ libros_leyendo }}</p>
+    <div class="kpi-card kpi-red" title="Libros que aún no has comenzado a leer.">
+        <span class="kpi-icon">📕</span>
+        <div class="kpi-title">Libros por leer</div>
+        <div class="kpi-value" title="Total de libros por leer este mes: {{ libros_por_leer }}">{{ libros_por_leer }}</div>
+        <div class="kpi-change" title="Cambio respecto al mes anterior: {{ cambio_libros_por_leer }}">{{ cambio_libros_por_leer }}</div>
+        <div class="kpi-desc">Libros que tienes pendientes de iniciar.</div>
     </div>
-    <div class="estadistica-card">
-        <h2>Libros por leer</h2>
-        <p>{{ libros_por_leer }}</p>
+    <div class="kpi-card kpi-yellow" title="Notas que has registrado sobre tus libros.">
+        <span class="kpi-icon">📝</span>
+        <div class="kpi-title">Notas totales</div>
+        <div class="kpi-value" title="Total de notas este mes: {{ total_notas }}">{{ total_notas }}</div>
+        <div class="kpi-change" title="Cambio respecto al mes anterior: {{ cambio_total_notas }}">{{ cambio_total_notas }}</div>
+        <div class="kpi-desc">Notas personales que has escrito sobre tus lecturas.</div>
     </div>
-    <div class="estadistica-card">
-        <h2>Total de notas</h2>
-        <p>{{ total_notas }}</p>
-    </div>
-    <div class="estadistica-card">
-        <h2>Total de metas</h2>
-        <p>{{ total_metas }}</p>
-    </div>
-    <div class="estadistica-card">
-        <h2>Porcentaje de avance en metas</h2>
-        <p>{{ promedio_avance_metas }}%</p>
+    <div class="kpi-card kpi-purple" title="Metas de lectura que has cumplido.">
+        <span class="kpi-icon">🎯</span>
+        <div class="kpi-title">Metas cumplidas</div>
+        <div class="kpi-value" title="Total de metas cumplidas este mes: {{ metas_cumplidas }}">{{ metas_cumplidas }}</div>
+        <div class="kpi-change" title="Cambio respecto al mes anterior: {{ cambio_metas_cumplidas }}">{{ cambio_metas_cumplidas }}</div>
+        <div class="kpi-desc">Objetivos de lectura que has alcanzado.</div>
+        <div class="mini-bar-label">Porcentaje de metas cumplidas</div>
+        <div class="mini-bar-outer">
+            <div class="mini-bar-inner mini-bar-{{ progreso_color }}" style="width: {{ porcentaje_metas_cumplidas }}%;">
+                {{ porcentaje_metas_cumplidas }}%
+            </div>
+        </div>
     </div>
 </div>
-
 <hr>
 <h2>Gráficas de tu actividad</h2>
 <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center;">
@@ -48,17 +60,51 @@
         <canvas id="notasLibroChart" width="350" height="350" aria-label="Notas por libro" role="img"></canvas>
     </div>
 </div>
+<hr>
+<h2>Metas y progreso</h2>
+<div class="metas-list">
+    <div class="progreso-bar-container">
+        <div class="progreso-bar-label">Progreso total en metas</div>
+        <div class="progreso-bar-outer">
+            <div class="progreso-bar-inner progreso-{{ progreso_color }}" style="width: {{ promedio_avance_metas }}%;">
+                {{ promedio_avance_metas }}%
+            </div>
+        </div>
+    </div>
+    <ul class="metas-ul">
+        {% for meta in metas %}
+            <li>
+                <span class="meta-nombre">{{ meta.nombre }}</span>
+                <span class="meta-indicador">{% if meta.cumplida %}✅{% else %}⏳{% endif %}</span>
+                <span class="meta-avance">{{ meta.avance }}%</span>
+                <span class="meta-detalle">(Objetivo: {{ meta.objetivo_libros }} libros, {{ meta.tipo|title }}, {{ meta.fecha_inicio|date:"d/m/Y" }} - {{ meta.fecha_fin|date:"d/m/Y" }})</span>
+            </li>
+        {% empty %}
+            <li>No tienes metas registradas.</li>
+        {% endfor %}
+    </ul>
+</div>
 {% endblock %}
 
 {% block extra_scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+// Colores accesibles
+const chartColors = {
+    verde: '#27ae60',
+    azul: '#2980b9',
+    rojo: '#c0392b',
+    amarillo: '#f1c40f',
+    morado: '#8e44ad'
+};
 // Gráfica de libros por estado
 const librosEstadoData = {
     labels: [{% for e in libros_por_estado %}'{{ e.estado|escapejs }}'{% if not forloop.last %},{% endif %}{% endfor %}],
     datasets: [{
         data: [{% for e in libros_por_estado %}{{ e.cantidad }}{% if not forloop.last %},{% endif %}{% endfor %}],
-        backgroundColor: ['#1abc9c', '#f39c12', '#e74c3c'],
+        backgroundColor: [chartColors.verde, chartColors.azul, chartColors.rojo],
+        borderColor: '#fff',
+        borderWidth: 2,
     }]
 };
 new Chart(document.getElementById('librosEstadoChart'), {
@@ -66,7 +112,21 @@ new Chart(document.getElementById('librosEstadoChart'), {
     data: librosEstadoData,
     options: {
         responsive: true,
-        plugins: { legend: { position: 'bottom' } }
+        plugins: {
+            legend: { position: 'bottom', labels: { color: '#2c3e50', font: { weight: 'bold' } } },
+            tooltip: {
+                backgroundColor: '#f4f6f8',
+                titleColor: '#2c3e50',
+                bodyColor: '#2c3e50',
+                borderColor: '#8e44ad',
+                borderWidth: 1,
+                callbacks: {
+                    label: function(context) {
+                        return `${context.label}: ${context.parsed} libros`;
+                    }
+                }
+            }
+        }
     }
 });
 
@@ -76,7 +136,11 @@ const notasLibroData = {
     datasets: [{
         label: 'Notas',
         data: [{% for t, n in notas_por_libro %}{{ n }}{% if not forloop.last %},{% endif %}{% endfor %}],
-        backgroundColor: '#1abc9c',
+        backgroundColor: chartColors.amarillo,
+        borderColor: chartColors.morado,
+        borderWidth: 2,
+        hoverBackgroundColor: chartColors.morado,
+        hoverBorderColor: chartColors.amarillo,
     }]
 };
 new Chart(document.getElementById('notasLibroChart'), {
@@ -84,8 +148,25 @@ new Chart(document.getElementById('notasLibroChart'), {
     data: notasLibroData,
     options: {
         responsive: true,
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true, stepSize: 1 } }
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                backgroundColor: '#f4f6f8',
+                titleColor: '#2c3e50',
+                bodyColor: '#2c3e50',
+                borderColor: '#2980b9',
+                borderWidth: 1,
+                callbacks: {
+                    label: function(context) {
+                        return `${context.label}: ${context.parsed.y} notas`;
+                    }
+                }
+            }
+        },
+        scales: {
+            x: { ticks: { color: '#2c3e50', font: { weight: 'bold' } } },
+            y: { beginAtZero: true, stepSize: 1, ticks: { color: '#2c3e50', font: { weight: 'bold' } } }
+        }
     }
 });
 </script>
@@ -93,27 +174,144 @@ new Chart(document.getElementById('notasLibroChart'), {
 
 {% block extra_head %}
 <style>
-.estadisticas-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 2rem;
+body {
+    background: #f4f6f8;
+    color: #2c3e50;
+}
+.kpi-row {
+    display: flex;
+    gap: 1.5rem;
+    margin: 2rem 0 2rem 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.kpi-card {
+    flex: 1 1 180px;
+    min-width: 180px;
+    max-width: 220px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 1.2rem 1rem 1rem 1rem;
+    text-align: center;
+    position: relative;
+    transition: transform 0.15s;
+    color: #2c3e50;
+}
+.kpi-card:hover {
+    transform: scale(1.04);
+}
+.kpi-icon {
+    font-size: 2.2rem;
+    display: block;
+    margin-bottom: 0.3rem;
+}
+.kpi-title {
+    font-size: 1.1rem;
+    color: #2c3e50;
+    margin-bottom: 0.2rem;
+}
+.kpi-value {
+    font-size: 2.1rem;
+    font-weight: bold;
+    margin-bottom: 0.2rem;
+}
+.kpi-change {
+    font-size: 0.95rem;
+    color: #888;
+}
+.kpi-green { background: #eafaf1; border-bottom: 4px solid #27ae60; }
+.kpi-blue { background: #eaf3fa; border-bottom: 4px solid #2980b9; }
+.kpi-red { background: #faeaea; border-bottom: 4px solid #c0392b; }
+.kpi-yellow { background: #fffbe5; border-bottom: 4px solid #f1c40f; }
+.kpi-purple { background: #f5eafd; border-bottom: 4px solid #8e44ad; }
+
+.mini-bar-label {
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    color: #8e44ad;
+}
+.mini-bar-outer {
+    background: #eee;
+    border-radius: 10px;
+    height: 18px;
+    width: 100%;
+    margin-top: 0.2rem;
+    overflow: hidden;
+}
+.mini-bar-inner {
+    height: 100%;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: #fff;
+    background: linear-gradient(90deg,#8e44ad,#6c3483);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 1.2s cubic-bezier(.4,0,.2,1);
+}
+.mini-bar-verde { background: linear-gradient(90deg,#27ae60,#229954); }
+.mini-bar-amarillo { background: linear-gradient(90deg,#f1c40f,#f39c12); }
+.mini-bar-rojo { background: linear-gradient(90deg,#c0392b,#922b21); }
+.mini-bar-blue { background: linear-gradient(90deg,#2980b9,#2471a3); }
+.mini-bar-purple { background: linear-gradient(90deg,#8e44ad,#6c3483); }
+
+.progreso-bar-container {
+    margin: 2rem 0 1.5rem 0;
+}
+.progreso-bar-label {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+.progreso-bar-outer {
+    background: #eee;
+    border-radius: 16px;
+    height: 32px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.progreso-bar-inner {
+    height: 100%;
+    border-radius: 16px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 1.2s cubic-bezier(.4,0,.2,1);
+}
+.progreso-verde { background: linear-gradient(90deg,#27ae60,#229954); }
+.progreso-amarillo { background: linear-gradient(90deg,#f1c40f,#f39c12); }
+.progreso-rojo { background: linear-gradient(90deg,#c0392b,#922b21); }
+.progreso-blue { background: linear-gradient(90deg,#2980b9,#2471a3); }
+.progreso-purple { background: linear-gradient(90deg,#8e44ad,#6c3483); }
+
+.metas-list {
     margin-top: 2rem;
 }
-.estadistica-card {
-    background: #f7f8fa;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    padding: 1.5rem;
-    text-align: center;
+.metas-ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
-.estadistica-card h2 {
-    margin-top: 0;
-    font-size: 1.2rem;
+.metas-ul li {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.7rem 0.2rem;
+    border-bottom: 1px solid #eee;
+    font-size: 1.08rem;
+    color: #2c3e50;
 }
-.estadistica-card p {
-    font-size: 2.2rem;
-    font-weight: bold;
-    margin: 0.5rem 0 0 0;
+.meta-nombre { flex: 1; }
+.meta-indicador { font-size: 1.3rem; margin-right: 0.5rem; }
+.meta-avance { font-size: 1rem; color: #888; margin-left: auto; }
+.meta-detalle {
+    font-size: 0.95rem;
+    color: #888;
+    margin-left: 1.2rem;
 }
 </style>
 {% endblock %}

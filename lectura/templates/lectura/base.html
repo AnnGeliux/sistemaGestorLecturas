@@ -6,36 +6,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Gestor de Lecturas - Administra tus libros, progresos y metas de lectura.">
     <title>{% block title %}Mi Gestor de Lecturas{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+    <link rel="stylesheet" href="{% static 'lectura/css/estilos.css' %}">
+    <script src="https://unpkg.com/lucide@latest"></script>
     {% block extra_head %}{% endblock %}
 </head>
-<body style="display: flex; flex-direction: column; min-height: 100vh;">
+<body class="layout-flex">
     <header>
-        <div class="container header-flex">
-            <h1>Gestor de Lecturas</h1>
-            <nav class="main-nav">
-                <a href="/">Inicio</a>
+        <nav class="navbar">
+            <div class="logo">
+                <i data-lucide="book-open" class="logo-icon"></i>
+                Gestor de Lecturas
+            </div>
+            <div class="nav-links" id="navLinks">
+                <a href="/" class="navbar-link">Inicio</a>
                 {% if user.is_authenticated %}
-                    <a href="{% url 'libros:lista_libros' %}">Libros</a>
-                    <a href="{% url 'metas:index' %}">Metas</a>
-                    <a href="{% url 'notas:index' %}">Notas</a>
-                    <a href="{% url 'estadisticas:index' %}">Estadísticas</a>
-                    <span class="user-info">👤 {{ user.username }}</span>
-                    {% if user.is_superuser or user.is_staff %}
-                        <a href="/admin/" target="_blank" class="admin-btn">Admin</a>
+                    <a href="{% url 'libros:lista_libros' %}" class="navbar-link">Libros</a>
+                    <a href="{% url 'metas:index' %}" class="navbar-link">Metas</a>
+                    <a href="{% url 'notas:index' %}" class="navbar-link">Notas</a>
+                    <a href="{% url 'estadisticas:index' %}" class="navbar-link">Estadísticas</a>
+                    {% if user.profile.avatar.url %}
+                        <img src="{{ user.profile.avatar.url }}" class="user-avatar" alt="Avatar">
                     {% endif %}
-                    <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    <span class="user-info">{{ user.username }}</span>
+                    {% if user.is_superuser or user.is_staff %}
+                        <a href="/admin/" target="_blank" class="admin-btn"><i data-lucide="settings"></i>Admin</a>
+                    {% endif %}
+                    <form action="{% url 'logout' %}" method="post">
                         {% csrf_token %}
-                        <button type="submit" class="logout-btn" style="background:none;border:none;color:inherit;cursor:pointer;padding:0;">Cerrar sesión</button>
+                        <button type="submit" class="logout-btn">Cerrar sesión</button>
                     </form>
                 {% else %}
-                    <a href="{% url 'login' %}">Iniciar sesión</a>
+                    <a href="{% url 'login' %}" class="navbar-link"><i data-lucide="log-in"></i>Iniciar sesión</a>
                 {% endif %}
-            </nav>
-        </div>
+            </div>
+            <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+        <script>
+        function toggleMenu() {
+            const nav = document.getElementById('navLinks');
+            nav.classList.toggle('open');
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+        });
+        </script>
     </header>
 
-    <main class="container" style="flex: 1 0 auto;">
+    <main class="container">
         {% if messages %}
             <div class="messages">
                 {% for message in messages %}
@@ -43,15 +64,9 @@
                 {% endfor %}
             </div>
         {% endif %}
-        {% block content %}
-        {% endblock %}
+        {% block content %}{% endblock %}
     </main>
-
-    <footer style="flex-shrink: 0;">
-        <div class="container">
-            <p>&copy; 2025 - Gestor de Lecturas</p>
-        </div>
+    <footer class="footer">
+        <div>© {{ now|default:2025 }} Gestor de Lecturas. Todos los derechos reservados.</div>
     </footer>
-    {% block extra_scripts %}{% endblock %}
-</body>
-</html>
+{% block extra_scripts %}{% endblock %}

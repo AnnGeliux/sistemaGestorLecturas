@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    background: #f6f8fa;
+    color: #222;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    background: linear-gradient(90deg, #1e293b 60%, #334155 100%);
+    color: #fff;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    height: 60px;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(30,41,59,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.navbar .logo {
+    font-weight: 700;
+    font-size: 1.3em;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.navbar .nav-links {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+.navbar .nav-links a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.navbar .nav-links a:hover {
+    background: #334155;
+    color: #38bdf8;
+    box-shadow: 0 2px 8px rgba(56,189,248,0.10);
+    text-decoration: underline;
+}
+.navbar .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: #38bdf8;
+}
+.navbar .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #38bdf8;
+}
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+}
+.hamburger span {
+    width: 28px;
+    height: 3px;
+    background: #fff;
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+@media (max-width: 800px) {
+    .navbar .nav-links {
+        display: none;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background: #1e293b;
+        flex-direction: column;
+        gap: 0;
+        box-shadow: 0 4px 16px rgba(30,41,59,0.12);
+    }
+    .navbar .nav-links.open {
+        display: flex;
+    }
+    .hamburger {
+        display: flex;
+    }
+}

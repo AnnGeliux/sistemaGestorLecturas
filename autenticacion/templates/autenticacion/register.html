@@ -6,7 +6,26 @@
 <h2>Crear una cuenta</h2>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {% for field in form %}
+        <div style="margin-bottom:18px;">
+            {{ field.label_tag }}<br>
+            {{ field }}
+            {% if field.help_text %}
+                <div style="color:#64748b;font-size:0.98em;">{{ field.help_text|safe }}</div>
+            {% endif %}
+            {% if field.name != 'password2' %}
+                {% for error in field.errors %}
+                    <div style="color:#e11d48;font-size:0.98em;">{{ error|safe }}</div>
+                {% endfor %}
+            {% else %}
+                {% for error in field.errors %}
+                    {% if 'coinciden' in error %}
+                        <div style="color:#e11d48;font-size:0.98em;">{{ error|safe }}</div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% endfor %}
     <button type="submit" class="btn btn-primary">Registrarse</button>
 </form>
 <p>¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a></p>

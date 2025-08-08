@@ -19,10 +19,16 @@
                 <span style="font-size:0.95em; color:#888;">Creada por: {{ p.meta.creador.nombre|default_if_none:'-' }}</span><br>
                 Fecha límite: {{ p.meta.fecha_fin }}<br>
                 {% if p.objetivo_libros %}
-                    Libros leídos: {{ p.libros_leidos }} / {{ p.objetivo_libros }}<br>
+                    Libros leídos: {{ p.libros_leidos }} / {{ p.objetivo_libros }}
+                    {% if p.libros_leidos|add:'0' >= p.objetivo_libros|add:'0' %}
+                        <span style="display:inline-block;background:#22c55e;color:#fff;font-size:0.95em;padding:2px 10px;border-radius:12px;margin-left:8px;vertical-align:middle;">
+                            &#x2714; ¡Meta completada!
+                        </span>
+                    {% endif %}<br>
                 {% else %}
                     Libros leídos: {{ p.libros_leidos }} / {{ p.total_libros }}<br>
                 {% endif %}
+                <span style="color:#0ea5e9;font-size:1em;font-weight:600;">Progreso: {{ p.porcentaje }}%</span>
                 {% if p.objetivo_notas %}
                     <ul>
                     {% for libro, notas in p.notas_por_libro.items %}

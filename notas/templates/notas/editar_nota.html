@@ -1,0 +1,16 @@
+{% extends 'lectura/base.html' %}
+
+{% block title %}Editar Nota{% endblock %}
+
+{% block content %}
+<h1>Editar Nota</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar cambios</button>
+</form>
+<div style="margin-top: 16px; display: flex; gap: 12px;">
+    <a href="{% url 'notas:index' %}" class="btn">Volver a mis notas</a>
+    <a href="{% url 'notas:eliminar_nota' nota.id %}" class="btn btn-danger">Eliminar nota</a>
+</div>
+{% endblock %}

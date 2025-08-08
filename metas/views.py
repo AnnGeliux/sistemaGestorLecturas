@@ -14,15 +14,30 @@ def index(request):
         metas = MetaLectura.objects.filter(usuarios_asignados=request.user)
     progreso = []
     for meta in metas:
-        total_libros = meta.libros_asociados.count()
-        libros_leidos = meta.libros_asociados.filter(estado='leido').count()
+        # Determinar el usuario principal de la meta (el primero asignado, o el creador si no hay asignados)
+        usuarios_meta = meta.usuarios_asignados.all()
+        if usuarios_meta.exists():
+            usuario_meta = usuarios_meta.first()
+        else:
+            usuario_meta = meta.creador
+        libros_usuario = Libro.objects.filter(usuario=usuario_meta)
+        total_libros = libros_usuario.count()
+        libros_leidos = libros_usuario.filter(estado='leido').count()
         objetivo_libros = getattr(meta, 'objetivo_libros', None)
         objetivo_notas = getattr(meta, 'objetivo_notas', None)
         notas_por_libro = {}
         if objetivo_notas:
-            for libro in meta.libros_asociados.all():
+            for libro in libros_usuario:
                 notas = Nota.objects.filter(libro=libro).count()
                 notas_por_libro[libro.titulo] = notas
+        # Calcular porcentaje de cumplimiento
+        if objetivo_libros:
+            if objetivo_libros > 0:
+                porcentaje = min(100, int((libros_leidos / objetivo_libros) * 100))
+            else:
+                porcentaje = 0
+        else:
+            porcentaje = int((libros_leidos / total_libros) * 100) if total_libros > 0 else 0
         progreso.append({
             'meta': meta,
             'total_libros': total_libros,
@@ -30,6 +45,8 @@ def index(request):
             'objetivo_libros': objetivo_libros,
             'objetivo_notas': objetivo_notas,
             'notas_por_libro': notas_por_libro,
+            'porcentaje': porcentaje,
+            'usuario_meta': usuario_meta,
         })
     if request.method == 'POST':
         form = MetaLecturaForm(request.POST, user=request.user)

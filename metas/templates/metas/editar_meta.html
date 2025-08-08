@@ -6,6 +6,14 @@
 <h1>Editar Meta: {{ meta.nombre }}</h1>
 <form method="post">
     {% csrf_token %}
+    <div style="margin-bottom:10px;color:#64748b;font-size:1em;">
+        {% if meta.objetivo_libros %}
+            <div><strong>Objetivo actual de libros leídos:</strong> {{ meta.objetivo_libros }}</div>
+        {% endif %}
+        {% if meta.objetivo_notas %}
+            <div><strong>Objetivo actual de notas por libro:</strong> {{ meta.objetivo_notas }}</div>
+        {% endif %}
+    </div>
     {{ form.as_p }}
     <button type="submit" class="btn">Guardar cambios</button>
     <a href="{% url 'metas:index' %}" class="btn">Cancelar</a>

@@ -3,9 +3,21 @@
 {% block title %}{{ libro.titulo }} | Detalle de Libro{% endblock %}
 
 {% block content %}
+
 <h1>{{ libro.titulo }}</h1>
 <p><strong>Autor:</strong> {{ libro.autor }}</p>
 <p><strong>Fecha de publicación:</strong> {{ libro.fecha_publicacion }}</p>
+
+<div style="margin: 18px 0;">
+    <strong>Portada actual:</strong><br>
+    {% if libro.imagen %}
+        <img src="{{ libro.imagen.url }}" alt="Portada de {{ libro.titulo }}" style="width:120px; box-shadow:0 2px 8px #ccc; border-radius:8px;">
+    {% else %}
+        <span style="color:#888;">Sin imagen</span>
+    {% endif %}
+    <br>
+    <a href="{% url 'libros:editar_libro' libro.id %}" class="btn btn-primary" style="margin-top:8px;display:inline-block;">Editar portada</a>
+</div>
 
 <p><strong>Progreso de lectura:</strong> {{ libro.avance_lectura }}</p>
 

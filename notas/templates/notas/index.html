@@ -13,9 +13,16 @@
 <h2>Notas recientes</h2>
 <ul>
     {% for nota in notas %}
-        <li>
-            <strong>{{ nota.libro.titulo }}</strong> ({{ nota.fecha }}):<br>
-            {{ nota.contenido|linebreaksbr }}
+        <li style="margin-bottom: 18px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+            <div>
+                <strong>{{ nota.libro.titulo }}</strong><br>
+                <span style="font-size: 0.95em; color: #555;">
+                    Creada por: <strong>{{ nota.autor.username }}</strong>
+                    el {{ nota.fecha }} a las {{ nota.hora_creacion|default_if_none:"--:--" }}
+                </span><br>
+                {{ nota.contenido|linebreaksbr }}
+            </div>
+            <a href="{% url 'notas:editar_nota' nota.id %}" class="btn btn-sm btn-primary" style="margin-top:4px; white-space:nowrap;">Editar</a>
         </li>
     {% empty %}
         <li>No tienes notas registradas.</li>

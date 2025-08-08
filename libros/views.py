@@ -1,3 +1,17 @@
+from django.urls import reverse
+
+def editar_libro(request, libro_id):
+    libro = get_object_or_404(Libro, id=libro_id)
+    if request.method == 'POST':
+        form = LibroForm(request.POST, request.FILES, instance=libro)
+        form.request = request
+        if form.is_valid():
+            form.save()
+            return redirect('libros:detalle_libro', libro_id=libro.id)
+    else:
+        form = LibroForm(instance=libro)
+        form.request = request
+    return render(request, 'libros/editar_libro.html', {'form': form, 'libro': libro})
 from .forms import ProgresoLibroForm
 from django.contrib import messages
 from django.shortcuts import render
@@ -24,7 +38,7 @@ def lista_libros(request):
 
 def crear_libro(request):
     if request.method == 'POST':
-        form = LibroForm(request.POST)
+        form = LibroForm(request.POST, request.FILES)
         form.request = request  # Para que el form pueda acceder al request y procesar nuevas etiquetas
         if form.is_valid():
             form.save()

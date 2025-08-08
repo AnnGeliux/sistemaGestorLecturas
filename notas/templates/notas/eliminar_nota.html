@@ -1,0 +1,21 @@
+{% extends 'lectura/base.html' %}
+
+{% block title %}Eliminar Nota{% endblock %}
+
+{% block content %}
+<h1>Eliminar Nota</h1>
+<p>¿Estás seguro que deseas eliminar esta nota?</p>
+<div style="margin-bottom: 12px;">
+    <strong>{{ nota.libro.titulo }}</strong><br>
+    <span style="font-size: 0.95em; color: #555;">
+        Creada por: <strong>{{ nota.autor.username }}</strong>
+        el {{ nota.fecha }} a las {{ nota.hora_creacion|default_if_none:"--:--" }}
+    </span><br>
+    {{ nota.contenido|linebreaksbr }}
+</div>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a href="{% url 'notas:editar_nota' nota.id %}" class="btn">Cancelar</a>
+</form>
+{% endblock %}

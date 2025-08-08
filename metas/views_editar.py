@@ -13,7 +13,12 @@ def editar_meta(request, pk):
     if request.method == 'POST':
         form = MetaLecturaForm(request.POST, instance=meta, user=request.user)
         if form.is_valid():
-            form.save()
+            meta = form.save(commit=False)
+            # Guardar los campos extra objetivo_libros y objetivo_notas
+            meta.objetivo_libros = form.cleaned_data.get('objetivo_libros')
+            meta.objetivo_notas = form.cleaned_data.get('objetivo_notas')
+            meta.save()
+            form.save_m2m()
             return redirect('metas:index')
     else:
         form = MetaLecturaForm(instance=meta, user=request.user)

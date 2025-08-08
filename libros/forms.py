@@ -43,9 +43,11 @@ class LibroForm(forms.ModelForm):
         empty_label='Selecciona una categoría (opcional)'
     )
 
+    imagen = forms.ImageField(required=False, label='Portada (opcional)')
+
     class Meta:
         model = Libro
-        fields = ['titulo', 'autor', 'genero', 'numero_paginas', 'estado', 'categoria', 'nueva_categoria', 'etiquetas', 'fecha_publicacion', 'usuario']
+        fields = ['titulo', 'autor', 'genero', 'numero_paginas', 'estado', 'categoria', 'nueva_categoria', 'etiquetas', 'fecha_publicacion', 'usuario', 'imagen']
 
     def clean(self):
         cleaned_data = super().clean()

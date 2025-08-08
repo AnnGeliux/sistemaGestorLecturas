@@ -15,6 +15,8 @@ class MetaLectura(models.Model):
     libros_asociados = models.ManyToManyField(Libro, related_name='metas')
     usuarios_asignados = models.ManyToManyField('autenticacion.Usuario', related_name='metas_asignadas', blank=True, help_text='Usuarios a los que se asigna esta meta')
     porcentaje_avance = models.DecimalField(max_digits=5, decimal_places=2, default=0, null=False, blank=True)
+    objetivo_libros = models.PositiveIntegerField(null=True, blank=True, help_text='Objetivo de libros leídos para esta meta')
+    objetivo_notas = models.PositiveIntegerField(null=True, blank=True, help_text='Objetivo de notas por libro para esta meta')
 
     def __str__(self):
         return self.nombre

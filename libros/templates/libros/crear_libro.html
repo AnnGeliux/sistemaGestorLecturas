@@ -4,7 +4,7 @@
 
 {% block content %}
 <h1>Registrar Nuevo Libro</h1>
-<form method="post" id="libro-form">
+<form method="post" enctype="multipart/form-data" id="libro-form">
     {% csrf_token %}
     {# Renderiza todos los campos excepto 'etiquetas' #}
     {% for field in form %}

@@ -3,69 +3,231 @@
 {% block title %}Lista de Libros | Gestor de Lecturas{% endblock %}
 
 {% block content %}
-<a href="{% url 'libros:crear_libro' %}" class="btn-add-book" title="Agregar libro">&#43; Agregar libro</a>
-<h1>Libros Registrados</h1>
+<div style="display:flex;flex-direction:column;align-items:center;gap:1.2rem;margin-bottom:1.5rem;">
+  <h1 style="margin:0;font-size:2.2rem;font-weight:700;text-align:center;">Libros Registrados</h1>
+  <p style="margin:0;font-size:1.15rem;color:#64748b;text-align:center;max-width:600px;">Aquí puedes ver todos los libros que has registrado y su progreso de lectura. Usa el botón para agregar nuevos libros a tu colección.</p>
+  <a href="{% url 'libros:crear_libro' %}" class="btn-add-book btn-dark-hover" title="Agregar libro" style="display:flex;align-items:center;gap:8px;"> <i data-lucide="plus-circle"></i>Agregar libro</a>
+</div>
 {% if es_admin %}
   <h2>Libros agregados por ti</h2>
-  <ul>
+  <div class="libros-grid">
     {% for libro in libros_propios %}
-      <li>
-        <a href="{% url 'libros:detalle_libro' libro.id %}">{{ libro.titulo }}</a> - {{ libro.autor }}
-        <span> | Progreso:
-          {% with porc=libro.avance_lectura|default_if_none:'0' %}
-          <span style="display:inline-block;vertical-align:middle;width:120px;height:16px;background:#eee;border-radius:8px;overflow:hidden;margin:0 6px;">
-            <span style="display:block;height:100%;background:#1abc9c;width:{{ porc }}%;transition:width 0.4s;"></span>
-          </span>
-          <span style="font-size:0.95em;">{{ porc }}%</span>
-          {% endwith %}
-        </span>
-      </li>
+      <div class="libro-card">
+        {% if libro.imagen %}
+          <img src="{{ libro.imagen.url }}" alt="Portada de {{ libro.titulo }}" class="libro-portada" />
+        {% else %}
+          <div class="libro-portada libro-portada-placeholder">Sin imagen</div>
+        {% endif %}
+        <div class="libro-info">
+          <a href="{% url 'libros:detalle_libro' libro.id %}" class="libro-titulo"><i data-lucide="book"></i>{{ libro.titulo }}</a>
+          <div class="libro-autor"><i data-lucide="user"></i>{{ libro.autor }}</div>
+          <div class="libro-progreso">
+            <span style="font-size:0.95em;">Progreso:</span>
+            {% with porc=libro.avance_lectura|default_if_none:'0' %}
+            <div class="progreso-bar">
+              <div class="progreso-bar-inner {% if porc|add:'0' < 30 %}progreso-low{% elif porc|add:'0' < 70 %}progreso-mid{% else %}progreso-high{% endif %}" style="width:{{ porc }}%"></div>
+            </div>
+            <span class="progreso-porc">{{ porc }}%</span>
+            {% endwith %}
+          </div>
+        </div>
+      </div>
     {% empty %}
-      <li>No has registrado libros.</li>
+      <div>No has registrado libros.</div>
     {% endfor %}
-    <h2>Libros de otros usuarios</h2>
-    <ul>
+  </div>
+  <hr style="margin:2.5rem 0 1.5rem 0;opacity:0.4;">
+  <h2>Libros de otros usuarios</h2>
+  <div class="libros-grid">
     {% for libro in libros_otros %}
-      <li>
-        <a href="{% url 'libros:detalle_libro' libro.id %}">{{ libro.titulo }}</a> - {{ libro.autor }} ({{ libro.usuario }})
-        <span> | Progreso:
-          {% with porc=libro.avance_lectura|default_if_none:'0' %}
-          <div style="display:inline-block;vertical-align:middle;width:120px;height:16px;background:#eee;border-radius:8px;overflow:hidden;margin:0 6px;">
-            <div style="height:100%; background:#1abc9c; width:{{ porc }}%; transition:width 0.4s;"></div>
+      <div class="libro-card">
+        {% if libro.imagen %}
+          <img src="{{ libro.imagen.url }}" alt="Portada de {{ libro.titulo }}" class="libro-portada" />
+        {% else %}
+          <div class="libro-portada libro-portada-placeholder">Sin imagen</div>
+        {% endif %}
+        <div class="libro-info">
+          <a href="{% url 'libros:detalle_libro' libro.id %}" class="libro-titulo"><i data-lucide="book"></i>{{ libro.titulo }}</a>
+          <div class="libro-autor"><i data-lucide="user"></i>{{ libro.autor }} ({{ libro.usuario }})</div>
+          <div class="libro-progreso">
+            <span style="font-size:0.95em;">Progreso:</span>
+            {% with porc=libro.avance_lectura|default_if_none:'0' %}
+            <div class="progreso-bar">
+              <div class="progreso-bar-inner {% if porc|add:'0' < 30 %}progreso-low{% elif porc|add:'0' < 70 %}progreso-mid{% else %}progreso-high{% endif %}" style="width:{{ porc }}%"></div>
+            </div>
+            <span class="progreso-porc">{{ porc }}%</span>
+            {% endwith %}
           </div>
-          <span style="font-size:0.95em;">{{ porc }}%</span>
-          {% endwith %}
-        </span>
-      </li>
+        </div>
+      </div>
     {% empty %}
-      <li>No hay libros de otros usuarios.</li>
+      <div>No hay libros de otros usuarios.</div>
     {% endfor %}
-  </ul>
+  </div>
 {% else %}
-  <ul>
+  <div class="libros-grid">
     {% for libro in libros %}
-      <li>
-        <a href="{% url 'libros:detalle_libro' libro.id %}">{{ libro.titulo }}</a> - {{ libro.autor }}
-        <span> | Progreso:
-          {% with porc=libro.avance_lectura|default_if_none:'0' %}
-          <div style="display:inline-block;vertical-align:middle;width:120px;height:16px;background:#eee;border-radius:8px;overflow:hidden;margin:0 6px;">
-            <div style="height:100%; background:#1abc9c; width:{{ porc }}%; transition:width 0.4s;"></div>
+      <div class="libro-card">
+        {% if libro.imagen %}
+          <img src="{{ libro.imagen.url }}" alt="Portada de {{ libro.titulo }}" class="libro-portada" />
+        {% else %}
+          <div class="libro-portada libro-portada-placeholder">Sin imagen</div>
+        {% endif %}
+        <div class="libro-info">
+          <a href="{% url 'libros:detalle_libro' libro.id %}" class="libro-titulo"><i data-lucide="book"></i>{{ libro.titulo }}</a>
+          <div class="libro-autor"><i data-lucide="user"></i>{{ libro.autor }}</div>
+          <div class="libro-progreso">
+            <span style="font-size:0.95em;">Progreso:</span>
+            {% with porc=libro.avance_lectura|default_if_none:'0' %}
+            <div class="progreso-bar">
+              <div class="progreso-bar-inner {% if porc|add:'0' < 30 %}progreso-low{% elif porc|add:'0' < 70 %}progreso-mid{% else %}progreso-high{% endif %}" style="width:{{ porc }}%"></div>
+            </div>
+            <span class="progreso-porc">{{ porc }}%</span>
+            {% endwith %}
           </div>
-          <span style="font-size:0.95em;">{{ porc }}%</span>
-          {% endwith %}
-        </span>
-      </li>
+        </div>
+      </div>
     {% empty %}
-      <li>No hay libros registrados.</li>
+      <div>No hay libros registrados.</div>
     {% endfor %}
-  </ul>
 {% endif %}
 <style>
+.libros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2.2rem;
+  margin-top: 2.2rem;
+}
+.libro-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(30,41,59,0.10);
+  padding: 1.2rem 1.2rem 1.2rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.2s, transform 0.2s;
+  min-height: 220px;
+  position: relative;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: libroFadeIn 0.7s cubic-bezier(.4,2,.3,1) forwards;
+}
+.libros-grid .libro-card:nth-child(1) { animation-delay: 0.05s; }
+.libros-grid .libro-card:nth-child(2) { animation-delay: 0.15s; }
+.libros-grid .libro-card:nth-child(3) { animation-delay: 0.25s; }
+.libros-grid .libro-card:nth-child(4) { animation-delay: 0.35s; }
+.libros-grid .libro-card:nth-child(5) { animation-delay: 0.45s; }
+.libros-grid .libro-card:nth-child(6) { animation-delay: 0.55s; }
+@keyframes libroFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.libro-card {
+  will-change: transform, box-shadow, border, background, padding, min-height, font-size;
+}
+.libro-card:hover {
+  box-shadow: 0 18px 48px 0 rgba(56,189,248,0.28), 0 2px 16px 0 rgba(30,41,59,0.10);
+  transform: scale(1.06) translateY(-10px) rotateZ(-1deg);
+  z-index: 3;
+  border: 2.5px solid #0ea5e9;
+  background: linear-gradient(120deg, #e0f7fa 60%, #f0fdfa 100%);
+  cursor: pointer;
+  padding: 1.6rem 1.5rem 1.6rem 1.5rem;
+  min-height: 250px;
+  font-size: 1.08rem;
+  transition: box-shadow 0.22s, transform 0.22s, border 0.18s, background 0.18s, padding 0.18s, min-height 0.18s, font-size 0.18s;
+}
+.libro-portada {
+  width: 120px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px #bbb;
+  margin-bottom: 1rem;
+}
+.libro-portada-placeholder {
+  width: 120px;
+  height: 160px;
+  background: #eee;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 1.1em;
+  margin-bottom: 1rem;
+}
+.libro-info {
+  width: 100%;
+  text-align: center;
+}
+.libro-titulo {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #1e293b;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+}
+.libro-titulo:hover {
+  color: #38bdf8;
+  text-decoration: underline;
+}
+.libro-autor {
+  color: #64748b;
+  font-size: 1em;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+}
+.libro-progreso {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+.progreso-bar {
+  width: 120px;
+  height: 16px;
+  background: #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0 6px;
+  display: inline-block;
+}
+.progreso-bar-inner {
+  height: 100%;
+  transition: width 0.4s;
+}
+.progreso-low {
+  background: linear-gradient(90deg, #ef4444 60%, #fbbf24 100%);
+}
+.progreso-mid {
+  background: linear-gradient(90deg, #fbbf24 60%, #38bdf8 100%);
+}
+.progreso-high {
+  background: linear-gradient(90deg, #1abc9c 60%, #38bdf8 100%);
+}
+.progreso-porc {
+  font-size: 0.95em;
+  color: #159c85;
+  font-weight: 600;
+}
 .btn-add-book {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     margin-bottom: 18px;
     padding: 10px 24px;
-    background: linear-gradient(135deg, #1abc9c 60%, #16a085 100%);
+    background: linear-gradient(135deg, #38bdf8 60%, #159c85 100%);
     color: #fff;
     border-radius: 24px;
     font-size: 1.15em;
@@ -74,11 +236,22 @@
     box-shadow: 0 2px 8px rgba(44,62,80,0.10);
     transition: box-shadow 0.2s, background 0.2s;
 }
-.btn-add-book:hover {
-    background: linear-gradient(135deg, #16a085 60%, #1abc9c 100%);
+.btn-add-book:hover, .btn-dark-hover:hover {
+    background: linear-gradient(135deg, #155e75 60%, #115e59 100%);
     box-shadow: 0 4px 16px rgba(44,62,80,0.18);
     color: #fff;
     text-decoration: none;
 }
+@media (max-width: 700px) {
+  .libros-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .libro-card {
+    min-height: 180px;
+    padding: 1.2rem 0.7rem 1.2rem 0.7rem;
+  }
+}
 </style>
+<script>if(window.lucide) lucide.createIcons();</script>
 {% endblock %}
